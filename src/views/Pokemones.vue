@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <PokemonList />
+    <PokemonList :pokemons="$store.state.shownPokemons" />
     <Tabla />
   </div>
 </template>

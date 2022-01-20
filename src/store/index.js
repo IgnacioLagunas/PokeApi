@@ -15,8 +15,11 @@ export default createStore({
     SET_POKEMONS(state, payLoad) {
       state.shownPokemons = payLoad;
     },
-    SET_CURRENT_POKEMONS(state, payLoad) {
+    ADD_CURRENT_POKEMON(state, payLoad) {
       state.currentPokemons.push(payLoad);
+    },
+    REMOVE_CURRENT_POKEMON(state, index) {
+      state.currentPokemons.splice(index, 1);
     },
     ADD_FAVORITE(state, payLoad) {
       state.favPokemons.push(payLoad);
@@ -32,10 +35,12 @@ export default createStore({
     },
   },
   actions: {
+    // Función para obtener una lista de 20 pokémons, si no se le pasa argumento busca los primeros 20.
+    // Al buscar los pokemons también guarda la proxima y la anterior página.
+
     async getPokemons({ state, commit }, url = state.API_URL) {
       try {
         let { data: response } = await axios.get(url);
-        console.log(response);
         commit("SET_POKEMONS", response.results);
         commit("SET_NEXT", response.next);
         commit("SET_PREVIOUS", response.previous);
@@ -51,19 +56,33 @@ export default createStore({
       dispatch("getPokemons", state.previousPage);
     },
 
-    async getPokemon({ commit }, pokemonUrl) {
-      let { data: pokemon } = await axios.get(pokemonUrl);
-      pokemon = {
-        name: pokemon.name,
-        height: pokemon.height,
-        weight: pokemon.weight,
-        sprite: pokemon.sprites.front_default,
-        id: pokemon.id,
+    // Busca un solo pokémon y si está repetido en los pokemon de la tabla simplemente no lo guarda.
+
+    async getPokemon({ commit, state }, pokemonUrl) {
+      let { data: newPokemon } = await axios.get(pokemonUrl);
+      newPokemon = {
+        name: newPokemon.name,
+        height: newPokemon.height,
+        weight: newPokemon.weight,
+        sprite: newPokemon.sprites.front_default,
+        id: newPokemon.id,
       };
-      commit("SET_CURRENT_POKEMONS", pokemon);
-      console.log(pokemon);
+      let isRepeated = state.currentPokemons.some(
+        (pokemon) => pokemon.id == newPokemon.id
+      );
+      if (!isRepeated) {
+        commit("ADD_CURRENT_POKEMON", newPokemon);
+      }
     },
 
+    removePokemon({ commit, state }, pokemonToEliminate) {
+      let indexOfPokemon = state.currentPokemons.findIndex(
+        (pokemon) => pokemon.id == pokemonToEliminate.id
+      );
+      commit("REMOVE_CURRENT_POKEMON", indexOfPokemon);
+    },
+
+    // Esta función agrega un pokemon a favorito y si este ya está lo elimina.
     addFavorite({ commit, state }, newPokemon) {
       let indexOfRepeatedPokemon = state.favPokemons.findIndex(
         (pokemon) => pokemon.id == newPokemon.id
@@ -74,12 +93,6 @@ export default createStore({
         commit("ADD_FAVORITE", newPokemon);
       }
     },
-
-    // Arreglar Mañanaaaaaaaaaaaa
-    // isRepeated({ state }, pokemon, list) {
-    //   console.log(state.previousPage);
-    //   return list.some((element) => element.id == pokemon.id);
-    // },
   },
   modules: {},
 });

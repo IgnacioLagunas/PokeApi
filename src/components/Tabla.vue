@@ -10,7 +10,7 @@
     </template>
     <Column>
             <template #body="slotProps" >
-                   <button class="option_btn  eliminate_btn" @click="test(slotProps.data)">X</button>
+                   <button class="option_btn  eliminate_btn" @click="removePokemon(slotProps.data)"><i class="fas fa-times"></i></button>
   
             </template>
         </Column>
@@ -25,7 +25,7 @@
                
                 <template #body="slotProps">
                 <div class="wrapper">
-                       <button class="option_btn add_btn" @click="addFavorite(slotProps.data)">E</button>
+                       <button class="option_btn add_btn" @click="addFavorite(slotProps.data)"><i class="far fa-star"></i></button>
                                </div>
                 </template>
           
@@ -52,8 +52,13 @@
             console.log(pokemon.name)
         }
         let addFavorite = (pokemon)=>{store.dispatch("addFavorite", pokemon)}
+
+        let removePokemon = (pokemon)=>{
+          store.dispatch("removePokemon", pokemon)
+        }
         
-      return {test, addFavorite};
+        
+      return {test, addFavorite, removePokemon};
     },
   };
 </script>
@@ -66,15 +71,17 @@
     }
     .option_btn{
         cursor: pointer;
-        border-radius: 50%;
+       background-color: transparent;
         border: none;
-        padding: 0.3em 0.6em;
+        font-size: 1.2em;
+        color: gray;
+        
     }
-    .eliminate_btn{
-        background-color: red;
+    .eliminate_btn:hover{
+        color: red;
     }
-    .add_btn{
-        background-color: cyan;
+    .add_btn:hover{
+        color: yellow
     }
     Column{
         text-align: center !important;

@@ -2,8 +2,9 @@
   <div>
     <Menubar :model="items" >
          <template #end>
-        <h1>Poke-API</h1>
+      <h1 class="navbar_logo" @click="$router.push('/')">API-Pokémon</h1>
     </template>
+  
      </Menubar>
   </div>
 </template>
@@ -16,24 +17,37 @@
       Menubar,
     },
     setup() {
+
       let items = ref([
         {
           label: "Inicio",
           icon: "pi pi-fw pi-file",
-          url: "https://pokeapi.co/docs/v2#resource-listspagination-section",
+          to: "/"
+
         },
         {
           label: "Pokemones",
           icon: "pi pi-fw pi-pencil",
+          to: "/pokemones"
+
         },
         {
           label: "Favoritos",
           icon: "pi pi-fw pi-pencil",
+          to: "/favoritos"
         },
       ]);
       return { items };
     },
   };
 </script>
-<style lang="" >
+<style scoped >
+  .navbar_logo{
+    font-size: 1.3em;
+    margin-right: 2em;
+    cursor: pointer;
+  }
+  .navbar_logo:hover{
+    color: white;
+  }
 </style>
